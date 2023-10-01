@@ -1,28 +1,13 @@
-export const postParticipant = async (data: any) => {
-  //checar se já há usuario com o mesmo nome data.name
-  //se não houver, criar um novo usuario
+import * as respository from "@/repositories";
+import { participantType } from "@/models/partipant-type";
 
-  // retornar o usuario criado
-  // {
-  //   id: number;
-  //   createdAt: string;
-  //   updatedAt: string;
-  //   name: string;
-  //   balance: number; // representado em centavos, ou seja, R$ 10,00 -> 1000
-  // }
-  return {};
+export const postParticipant = async (data: participantType) => {
+  const user = await respository.getParticipantByName(data.name);
+  if (user) throw new Error("Já existe um usuário com esse nome");
+
+  return respository.postParticipant(data);
 };
 
-export const getParticipants = async () => {
-  // retornar todos os usuarios
-  /*
-  {
-    id: number;
-    createdAt: string;
-    updatedAt: string;
-    name: string;
-    balance: number; // representado em centavos, ou seja, R$ 10,00 -> 1000
-  }[]
-  */
-  return [];
+export const getParticipants = () => {
+  return respository.getParticipants();
 };

@@ -1,25 +1,27 @@
-export const postBet = (data: any) => {
-  // O valor da aposta deve ser descontado imediatamente
-  // do saldo do participante.
-  // Checar se o participante existe data.participantId
-  // Checar se o jogo existe data.gameId
-  // Checar se o jogo já foi finalizado
-  // Checar se o participante já apostou nesse jogo
-  // Checar se o participante tem saldo suficiente para cobrir a aposta
-  // Diminuir o saldo do participante
-  // Criar a aposta
-  /* {
-	id: number;
-	createdAt: string;
-	updatedAt: string;
-	homeTeamScore: number;
-	awayTeamScore: number;
-	amountBet: number; // representado em centavos, ou seja, R$ 10,00 -> 1000
-	gameId: number; 
-	participantId: number;
-	status: string; // podendo ser PENDING, WON ou LOST
-	amountWon: number || null; // nulo quando a aposta ainda está PENDING; number caso a aposta já esteja WON ou LOST, com o valor ganho representado em centavos
-    } */
+import * as respository from "@/repositories";
+import { BetType } from "@/models";
 
-  return {};
+export const postBet = async (data: BetType) => {
+  const user = await respository.getUserById(data.participantId);
+  if (!user) throw new Error("Participant not found");
+
+  const game = await respository.getGameById(user.id);
+  if (!game) throw new Error("Game not found");
+  if (game.isFinished) throw new Error("Game already finished");
+
+  const bet = await respository.getBetByGameIdAndParticipantId(game.id, user.id);
+  if (bet) throw new Error("Participant already bet on this game");
+
+  if (user.balance < data.amountBet) throw new Error("Insufficient balance");
+  await respository.discountBetAmount(user.id, data.amountBet);
+
+  const newBet = {
+    homeTeamScore: data.homeTeamScore,
+    awayTeamScore: data.awayTeamScore,
+    amountBet: data.amountBet,
+    gameId: game.id,
+    participantId: user.id,
+  };
+
+  return await respository.postBet(newBet);
 };

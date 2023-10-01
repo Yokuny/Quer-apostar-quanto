@@ -1,18 +1,14 @@
-import { prisma } from "@prisma/client";
+import { prisma } from "../src/database";
 
 async function seed() {
   // Create some users
   const users = await prisma.user.createMany([
     {
-      email: "john.doe@example.com",
       name: "John Doe",
-      password: "password",
       balance: 100,
     },
     {
-      email: "jane.doe@example.com",
       name: "Jane Doe",
-      password: "password",
       balance: 50,
     },
   ]);

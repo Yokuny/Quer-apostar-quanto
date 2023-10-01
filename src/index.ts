@@ -1,6 +1,6 @@
 import express, { Application } from "express";
-import { participantsRoute, gamesRoute, betsRoute } from "./routers";
-import { connectDb } from "./database";
+import { participantsRoute, gamesRoute, betsRoute } from "@/routers";
+import { connectDb } from "@/database";
 
 const app: Application = express();
 
