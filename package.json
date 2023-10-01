@@ -1,0 +1,56 @@
+{
+  "name": "quer-apostar-quanto",
+  "version": "1.0.0",
+  "description": "Desafio tecnico backend em TypeScript, Node + Express, Prisma (ORM), PostgresSQL, Jest e Supertest",
+  "main": "dist/index.js",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "migration:run": "prisma migrate deploy",
+    "migration:generate": "npm run dev:load-envs prisma migrate dev",
+    "lint": "eslint .",
+    "lint:staged": "lint-staged",
+    "test": "cross-env NODE_ENV=test jest --passWithNoTests --runInBand",
+    "test:migration:run": "npm run test:load-envs prisma migrate deploy",
+    "test:coverage": "cross-env NODE_ENV=test jest --passWithNoTests --runInBand --coverage --collectCoverageFrom='./src/**'",
+    "test:migration:generate": "npm run test:load-envs prisma migrate dev",
+    "test:watch": "jest --watch --passWithNoTests --runInBand",
+    "test:load-envs": "dotenv -e .env.test",
+    "test:seed": "npm run test:load-envs prisma db seed",
+    "dev:load-envs": "dotenv -e .env.development",
+    "dev:migration:run": "npm run dev:load-envs prisma migrate deploy",
+    "dev:migration:generate": "npm run dev:load-envs prisma migrate dev",
+    "dev:seed": "npm run dev:load-envs prisma db seed",
+    "dev": "cross-env NODE_ENV=development nodemon --watch 'src/' --exec 'ts-node -r tsconfig-paths/register ./src/server.ts' -e ts"
+  },
+  "author": "Yokuny",
+  "license": "ISC",
+  "prisma": {
+    "seed": "npm run dev:load-envs -- ts-node prisma/seed.ts"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^5.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^26.6.3",
+    "nodemon": "^2.0.16",
+    "prisma": "^3.14.0",
+    "supertest": "^6.2.3",
+    "ts-jest": "^26.5.5",
+    "ts-node": "^10.7.0",
+    "tsconfig-paths": "3.9.0",
+    "typescript": "^4.2.4",
+    "typescript-transform-paths": "2.2.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.14.0",
+    "bcrypt": "^5.0.1",
+    "dayjs": "^1.11.2",
+    "dotenv": "^16.0.1",
+    "dotenv-expand": "^8.0.3",
+    "express": "^4.18.1",
+    "http-status": "^1.5.2",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1"
+  }
+}
