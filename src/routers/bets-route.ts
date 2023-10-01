@@ -1,8 +1,10 @@
 import { Router } from "express";
-// import { validateBody } from "@/middlewares/validation-middleware";
+import * as controller from "@/controllers/bets-controller";
+import { validateBody } from "@/middlewares/validation-middleware";
+import { betSchema } from "@/schemas/bet-schema";
 
 const betsRoute = Router();
 
-betsRoute.post("/", (req, res) => res.send("Hello from bets route!"));
+betsRoute.post("/", validateBody(betSchema), controller.postBet);
 
 export { betsRoute };

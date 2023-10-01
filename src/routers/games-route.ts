@@ -1,11 +1,13 @@
 import { Router } from "express";
-// import { validateBody } from "@/middlewares/validation-middleware";
+import * as controller from "@/controllers/games-controller";
+import { validateBody } from "@/middlewares/validation-middleware";
+import { gameSchema, endGameSchema } from "@/schemas/game-schema";
 
 const gamesRoute = Router();
 
-gamesRoute.get("/", (req, res) => res.send("Hello from get games route!"));
-gamesRoute.get("/:id", (req, res) => res.send("Hello from get games route by id!"));
-gamesRoute.post("/:id/finish", (req, res) => res.send("Hello from post games route by id and finish!"));
-gamesRoute.post("/", (req, res) => res.send("Hello from post games route!"));
+gamesRoute.post("/", validateBody(gameSchema), controller.postGame);
+gamesRoute.get("/", controller.getGames);
+gamesRoute.get("/:id", controller.getGameInfo);
+gamesRoute.post("/:id/finish", validateBody(endGameSchema), controller.finishGame);
 
 export { gamesRoute };

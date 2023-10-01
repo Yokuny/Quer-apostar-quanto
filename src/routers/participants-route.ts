@@ -1,9 +1,11 @@
 import { Router } from "express";
-// import { validateBody } from "@/middlewares/validation-middleware";
+import * as controller from "@/controllers/participants-controller";
+import { validateBody } from "@/middlewares/validation-middleware";
+import { participantSchema } from "@/schemas/participant-schema";
 
 const participantsRoute = Router();
 
-participantsRoute.get("/", (req, res) => res.send("Hello from get participants route!"));
-participantsRoute.post("/:id", (req, res) => res.send("Hello from post participants route by id!"));
+participantsRoute.post("/", validateBody(participantSchema), controller.postParticipant);
+participantsRoute.get("/", controller.getParticipants);
 
 export { participantsRoute };

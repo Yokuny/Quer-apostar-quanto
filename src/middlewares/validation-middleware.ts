@@ -19,9 +19,7 @@ function validate(schema: ObjectSchema, type: "body" | "params") {
     if (!error) {
       next();
     } else {
-      console.log(error);
-      console.log("<><> Inside validation middleware <><>");
-      res.status(httpStatus.BAD_REQUEST).send();
+      res.status(httpStatus.BAD_REQUEST).send(error.details.map((d) => d.message));
     }
   };
 }
