@@ -1,10 +1,13 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
+import * as service from "@/services/participants-service";
 
 export const postParticipant = async (req: Request, res: Response) => {
-  res.status(httpStatus.CREATED).send();
+  const result = await service.postParticipant(req.body);
+  res.status(httpStatus.CREATED).send(result);
 };
 
 export const getParticipants = async (req: Request, res: Response) => {
-  res.status(httpStatus.OK).send();
+  const result = await service.getParticipants();
+  res.status(httpStatus.OK).send(result);
 };

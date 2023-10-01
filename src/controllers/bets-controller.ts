@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
+import httpStatus from "http-status";
+import * as service from "../services/bets-service";
 
 export const postBet = (req: Request, res: Response) => {
-  res.send("Hello from post bets route!");
+  const bet = service.postBet(req.body);
+  res.status(httpStatus.CREATED).json(bet);
 };

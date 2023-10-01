@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as controller from "@/controllers/participants-controller";
 import { validateBody } from "@/middlewares/validation-middleware";
-import { participantSchema } from "@/schemas/participant-schema";
+import { participantSchema } from "@/schemas";
 
 const participantsRoute = Router();
 
