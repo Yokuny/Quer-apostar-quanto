@@ -10,3 +10,8 @@ export interface NewGameType {
   awayTeamScore: 0;
   isFinished: false;
 }
+
+export interface GameScoreType {
+  homeTeamScore: number;
+  awayTeamScore: number;
+}

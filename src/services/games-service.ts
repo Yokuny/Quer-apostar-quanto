@@ -1,5 +1,6 @@
 import * as repository from "@/repositories";
-import { NewGameType, NewGameDataType, CustomError } from "@/models";
+import { NewGameType, NewGameDataType, GameScoreType, CustomError, totalAmountType } from "@/models";
+import { Bet } from "@prisma/client";
 
 export const postGame = async (data: NewGameDataType) => {
   if (data.homeTeamName === data.awayTeamName) throw new CustomError("Times iguais", 406);
@@ -66,50 +67,61 @@ export const getGameInfo = async (id: string) => {
   return gameInfo;
 };
 
-export const finishGame = async (data: NewGameDataType, id: string) => {
+const calculateWinningAmount = (bets: Bet[]) => {
+  const houseGain = 0.3;
+
+  const allMoney = bets.reduce((total: number, bet: Bet) => {
+    if (bet.status === "PENDING") return total + bet.amountBet;
+    return total;
+  }, 0);
+
+  const finalAmount = allMoney * (1 - houseGain);
+
+  return { finalAmount, totalAmount: allMoney };
+};
+
+const calculateAmount = (bet: Bet, totalAmount: number, totalWinning: number) => {
+  const roundDown = (value: any, decimalPlaces = 0) => {
+    const factor = 10 ** decimalPlaces;
+    return Math.floor(value * factor) / factor;
+  };
+  return roundDown((bet.amountBet / totalWinning) * totalAmount);
+};
+
+const processBet = async (bet: Bet, data: GameScoreType, totalAmount: totalAmountType) => {
+  if (bet.status === "PENDING") {
+    if (bet.homeTeamScore === data.homeTeamScore && bet.awayTeamScore === data.awayTeamScore) {
+      const betWinningAmount = calculateAmount(bet, totalAmount.totalAmount, totalAmount.finalAmount);
+
+      await repository.updateBet(bet.id, "WON", betWinningAmount);
+
+      const user = await repository.getUserById(bet.participantId);
+      if (user) {
+        const newBalance = user.balance + betWinningAmount;
+        await repository.updateParticipant(user.id, newBalance);
+      } else {
+        await repository.updateBet(bet.id, "LOST", 0);
+      }
+    }
+  }
+};
+
+export const finishGame = async (data: GameScoreType, id: string) => {
   const game = await getGameById(id);
+  console.log("get game: ", game);
   if (game.isFinished) throw new CustomError("Jogo já finalizado", 409);
 
-  //Finaliza um jogo e consequentemente atualiza todas as apostas atreladas a
-  //ele, calculando o valor ganho em cada uma e atualizando o saldo dos participantes
+  const bets = await repository.getBetsOfAGame(game.id);
+  if (!bets) throw new CustomError("Nenhuma aposta encontrada", 404);
 
-  // - Ao finalizar um jogo, este deve ser marcado como finalizado (`isFinished = true`).
-  // - Ao finalizar um jogo, o placar do jogo deve ser atualizado com os valores fornecidos.
-  // - Ao finalizar um jogo, todas as apostas deste jogo devem ser atualizadas:
-  //     - Apostas incorretas
-  //         - Tem o `status` alterado de `PENDING` para `LOST`
-  //         - Tem o `amountWon` alterado para `0`
-  //     - Apostas corretas
-  //         - Tem o `status` alterado de `PENDING` para `WON`
-  //         - Tem o `amountWon` alterado para o quanto o participante ganhou naquela aposta
-  //         - Atualiza o saldo do participante para acrescentar o valor ganho
-  // - O valor ganho em uma aposta é dado pela seguinte fórmula:
-  //     ```tsx
-  //     Valor ganho em uma aposta = (Valor apostado nessa aposta / (soma do valor apostado de todas as apostas vencedoras daquele jogo)) * (soma do valor de todas as apostas daquele jogo) * (1 - taxa da casa)
-  //     ```
-  //     - A taxa da casa é um valor fixo de `0.3` (30%)
-  //     - O valor final deve ser sempre arredondado pra baixo em caso de números fracionários
-  //     - Exemplo do cálculo acima
-  //         - No jogo Flamengo x Fluminense, foram feitas 3 apostas:
-  //             - João apostou R$ 10,00 no placar 2x2
-  //             - Maria apostou R$ 20,00 no placar 2x2
-  //             - José apostou R$ 30,00 no placar 3x1
-  //         - Supondo que o jogo tenha sido encerrado com o placar 2x2, João e Maria foram vencedores. O cálculo de quanto cada um deve ganhar seria o seguinte:
-  //             ```tsx
-  //             João: (1000 / (1000+2000)) * (1000+2000+3000) * (1 - 0.3) = 1400
-  //             Maria: (2000 / (1000+2000)) * (1000+2000+3000) * (1 - 0.3) = 2800
-  //             José: perdeu tudo = 0
-  //             ```
-  //             - Lembrando que os valores acima estão mapeados para inteiros representando os centavos (R$ 10,00 → 1000)
-  /* {
-    id: number;
-    createdAt: string;
-    updatedAt: string;
-    homeTeamName: string;
-    awayTeamName: string;
-    homeTeamScore: number;
-    awayTeamScore: number;
-    isFinished: boolean;
-  } */
-  return "não implementado";
+  const totalAmount = calculateWinningAmount(bets);
+  console.log("get totalAmount: ", totalAmount);
+
+  for (const bet of bets) {
+    await processBet(bet, data, totalAmount);
+  }
+  console.log("get bets after process: ", bets);
+
+  return await repository.finishGame(Number(id), data);
 };
+

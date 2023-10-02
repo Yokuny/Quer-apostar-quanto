@@ -24,3 +24,17 @@ export const getBetsOfAGame = (gameId: number) => {
     },
   });
 };
+
+
+export const updateBet = (id: number, status: string, amountWon: number) => {
+  return prisma.bet.update({
+    where: {
+      id,
+    },
+    data: {
+      status,
+      amountWon,
+      updatedAt: new Date(),
+    },
+  });
+};

@@ -40,3 +40,15 @@ export const discountBetAmount = (userId: number, amount: number) => {
     },
   });
 };
+
+export const updateParticipant = (id: number, balance: number) => {
+  return prisma.user.update({
+    where: {
+      id,
+    },
+    data: {
+      balance,
+      updatedAt: new Date(),
+    },
+  });
+};

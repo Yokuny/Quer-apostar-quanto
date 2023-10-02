@@ -11,6 +11,7 @@
     "test": "cross-env NODE_ENV=test jest --passWithNoTests --runInBand",
     "test:coverage": "cross-env NODE_ENV=test jest --passWithNoTests --runInBand --coverage --collectCoverageFrom='./src/**'",
     "test:seed": "npm run test:load-envs prisma db seed",
+    "dev:load-envs": "dotenv -e .env.development",
     "dev:seed": "npm run dev:load-envs prisma db seed",
     "dev": "cross-env NODE_ENV=development nodemon --watch 'src/' --exec 'ts-node -r tsconfig-paths/register ./src/server.ts' -e ts"
   },
@@ -31,6 +32,7 @@
   },
   "dependencies": {
     "@prisma/client": "^3.14.0",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
     "dotenv-expand": "^8.0.3",
     "express": "^4.18.1",
