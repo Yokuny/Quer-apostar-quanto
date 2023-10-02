@@ -42,6 +42,6 @@ model Bet {
   gameId        Int
   participant   User     @relation(fields: [participantId], references: [id])
   participantId Int
-  status        String
+  status        String   @default("PENDING")
   amountWon     Float?
 }

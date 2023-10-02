@@ -2,6 +2,8 @@ import * as repository from "@/repositories";
 import { NewGameType, NewGameDataType, CustomError } from "@/models";
 
 export const postGame = async (data: NewGameDataType) => {
+  if (data.homeTeamName === data.awayTeamName) throw new CustomError("Times iguais", 406);
+
   const registredGame = await repository.getGameByHomeTeamAndAwayTeam(data);
   if (registredGame) throw new CustomError("Jogo já cadastrado", 409);
 

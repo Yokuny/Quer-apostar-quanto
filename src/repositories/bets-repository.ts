@@ -1,7 +1,8 @@
 import { prisma } from "@/database";
 import { Bet } from "@prisma/client";
+import { NewBetType } from "@/models/newBet-type";
 
-export const postBet = (data: any) => {
+export const postBet = (data: NewBetType) => {
   return prisma.bet.create({
     data,
   });
