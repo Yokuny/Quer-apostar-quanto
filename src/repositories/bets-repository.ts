@@ -15,3 +15,11 @@ export const getBetByGameIdAndParticipantId = (gameId: number, participantId: nu
     },
   });
 };
+
+export const getBetsOfAGame = (gameId: number) => {
+  return prisma.bet.findMany({
+    where: {
+      gameId: gameId,
+    },
+  });
+};

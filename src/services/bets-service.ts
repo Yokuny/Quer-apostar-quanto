@@ -1,7 +1,7 @@
 import * as respository from "@/repositories";
-import { BetType } from "@/models";
+import { NewBetType } from "@/models";
 
-export const postBet = async (data: BetType) => {
+export const postBet = async (data: NewBetType) => {
   const user = await respository.getUserById(data.participantId);
   if (!user) throw new Error("Participant not found");
 

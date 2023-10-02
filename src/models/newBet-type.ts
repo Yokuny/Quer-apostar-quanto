@@ -1,4 +1,4 @@
-export interface BetType {
+export interface NewBetType {
   homeTeamScore: number;
   awayTeamScore: number;
   amountBet: number;
