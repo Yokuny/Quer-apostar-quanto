@@ -1,9 +1,9 @@
 import * as repository from "@/repositories";
-import { NewGameType, NewGameDataType } from "@/models";
+import { NewGameType, NewGameDataType, CustomError } from "@/models";
 
 export const postGame = async (data: NewGameDataType) => {
   const registredGame = await repository.getGameByHomeTeamAndAwayTeam(data);
-  if (registredGame) throw new Error("Jogo já cadastrado");
+  if (registredGame) throw new CustomError("Jogo já cadastrado", 409);
 
   const newGame: NewGameType = {
     homeTeamName: data.homeTeamName,
@@ -24,10 +24,10 @@ export const getGames = async () => {
 };
 
 const getGameById = async (id: string) => {
-  if (!id) throw new Error("Id não informado");
+  if (!id) throw new CustomError("Id não informado", 400);
 
   const game = await repository.getGameById(Number(id));
-  if (!game) throw new Error("Jogo não encontrado");
+  if (!game) throw new CustomError("Jogo não encontrado", 404);
 
   return game;
 };
@@ -36,7 +36,7 @@ export const getGameInfo = async (id: string) => {
   const game = await getGameById(id);
 
   const bets = await repository.getBetsOfAGame(game.id);
-  if (!bets) throw new Error("Jogo não encontrado");
+  if (!bets) throw new CustomError("Nenhuma aposta encontrada", 404);
 
   const gameInfo = {
     id: game.id,
@@ -66,7 +66,7 @@ export const getGameInfo = async (id: string) => {
 
 export const finishGame = async (data: NewGameDataType, id: string) => {
   const game = await getGameById(id);
-  if (game.isFinished) throw new Error("Jogo já finalizado");
+  if (game.isFinished) throw new CustomError("Jogo já finalizado", 409);
 
   //Finaliza um jogo e consequentemente atualiza todas as apostas atreladas a
   //ele, calculando o valor ganho em cada uma e atualizando o saldo dos participantes

@@ -1,9 +1,9 @@
 import * as respository from "@/repositories/participants-repository";
-import { NewParticipantType } from "@/models/newPartipant-type";
+import { NewParticipantType, CustomError } from "@/models";
 
 export const postParticipant = async (data: NewParticipantType) => {
   const user = await respository.getParticipantByName(data.name);
-  if (user) throw new Error("Já existe um usuário com esse nome");
+  if (user) throw new CustomError("Participant already registred", 409);
 
   return respository.postParticipant(data);
 };

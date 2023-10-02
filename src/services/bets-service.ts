@@ -1,18 +1,18 @@
 import * as respository from "@/repositories";
-import { NewBetType } from "@/models";
+import { NewBetType, CustomError } from "@/models";
 
 export const postBet = async (data: NewBetType) => {
   const user = await respository.getUserById(data.participantId);
-  if (!user) throw new Error("Participant not found");
+  if (!user) throw new CustomError("Participant not found", 401);
 
   const game = await respository.getGameById(user.id);
-  if (!game) throw new Error("Game not found");
-  if (game.isFinished) throw new Error("Game already finished");
+  if (!game) throw new CustomError("Game not found", 404);
+  if (game.isFinished) throw new CustomError("Game is finished", 409);
 
   const bet = await respository.getBetByGameIdAndParticipantId(game.id, user.id);
-  if (bet) throw new Error("Participant already bet on this game");
+  if (bet) throw new CustomError("Bet already registred", 409);
 
-  if (user.balance < data.amountBet) throw new Error("Insufficient balance");
+  if (user.balance < data.amountBet) throw new CustomError("Insufficient balance", 402);
   await respository.discountBetAmount(user.id, data.amountBet);
 
   const newBet = {
