@@ -1,5 +1,4 @@
 import { prisma } from "../database";
-import { User } from "@prisma/client";
 import { NewParticipantType } from "../models/newPartipant-type";
 
 export const postParticipant = (data: NewParticipantType) => {

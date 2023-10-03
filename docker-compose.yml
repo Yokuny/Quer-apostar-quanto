@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  backend:
+    build: .
+    command: npm run dev
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://user@pass/quer_apostar_quanto
+
+  postgres:
+    image: postgres:alpine
+    restart: always
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: quer_apostar_quanto

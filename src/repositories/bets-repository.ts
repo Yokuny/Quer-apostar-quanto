@@ -1,5 +1,4 @@
 import { prisma } from "../database";
-import { Bet } from "@prisma/client";
 import { NewBetType } from "../models/newBet-type";
 
 export const postBet = (data: NewBetType) => {

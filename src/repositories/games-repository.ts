@@ -1,5 +1,4 @@
 import { prisma } from "../database";
-import { Game } from "@prisma/client";
 import { NewGameType, NewGameDataType, GameScoreType } from "../models/newGame-type";
 
 export const postGame = (data: NewGameType) => {
