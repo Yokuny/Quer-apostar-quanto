@@ -3,10 +3,12 @@
 
 # Passos
 
-npm i typescript ts-node dotenv express prisma @prisma/client
-npm i -D ts-node-dev @types/node @types/express
-
-mkdir src/index.ts
-touch tsconfig.json
-
+npm install
 npx prisma init
+
+put your database credentials in .env file
+
+npx prisma db push
+npm run dev:seed
+
+npm run dev
