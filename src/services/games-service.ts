@@ -20,15 +20,13 @@ export const postGame = async (data: NewGameDataType) => {
 };
 
 export const getGames = async () => {
-  const games = repository.getGames();
-  if (!games) return [];
+  const games = await repository.getGames();
+  if (!games || !games.length) return [];
 
   return games;
 };
 
 const getGameById = async (id: string) => {
-  if (!id) throw new CustomError("Id não informado", 400);
-
   const game = await repository.getGameById(Number(id));
   if (!game) throw new CustomError("Jogo não encontrado", 404);
 
@@ -39,7 +37,7 @@ export const getGameInfo = async (id: string) => {
   const game = await getGameById(id);
 
   const bets = await repository.getBetsOfAGame(game.id);
-  if (!bets) throw new CustomError("Nenhuma aposta encontrada", 404);
+  if (!bets) throw new CustomError("Erro ao buscar apostas", 500);
 
   const gameInfo = {
     id: game.id,
@@ -108,19 +106,14 @@ const processBet = async (bet: Bet, data: GameScoreType, totalAmount: totalAmoun
 
 export const finishGame = async (data: GameScoreType, id: string) => {
   const game = await getGameById(id);
-  console.log("get game: ", game);
   if (game.isFinished) throw new CustomError("Jogo já finalizado", 409);
 
   const bets = await repository.getBetsOfAGame(game.id);
-  if (!bets) throw new CustomError("Nenhuma aposta encontrada", 404);
+  if (!bets) throw new CustomError("Erro ao buscar apostas", 500);
 
   const totalAmount = calculateWinningAmount(bets);
-  console.log("get totalAmount: ", totalAmount);
 
-  for (const bet of bets) {
-    await processBet(bet, data, totalAmount);
-  }
-  console.log("get bets after process: ", bets);
+  for (const bet of bets) await processBet(bet, data, totalAmount);
 
   return await repository.finishGame(Number(id), data);
 };
