@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
-import * as service from "@/services/bets-service";
-import { CustomError } from "@/models";
+import * as service from "../services/bets-service";
+import { CustomError } from "../models";
 
 export const postBet = async (req: Request, res: Response) => {
   try {

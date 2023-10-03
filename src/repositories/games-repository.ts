@@ -1,6 +1,6 @@
-import { prisma } from "@/database";
+import { prisma } from "../database";
 import { Game } from "@prisma/client";
-import { NewGameType, NewGameDataType, GameScoreType } from "@/models/newGame-type";
+import { NewGameType, NewGameDataType, GameScoreType } from "../models/newGame-type";
 
 export const postGame = (data: NewGameType) => {
   return prisma.game.create({
@@ -42,5 +42,3 @@ export const finishGame = (id: number, data: GameScoreType) => {
     },
   });
 };
-
-

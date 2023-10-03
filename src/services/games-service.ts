@@ -1,5 +1,5 @@
-import * as repository from "@/repositories";
-import { NewGameType, NewGameDataType, GameScoreType, CustomError, totalAmountType } from "@/models";
+import * as repository from "../repositories";
+import { NewGameType, NewGameDataType, GameScoreType, CustomError, totalAmountType } from "../models";
 import { Bet } from "@prisma/client";
 
 export const postGame = async (data: NewGameDataType) => {
@@ -117,4 +117,3 @@ export const finishGame = async (data: GameScoreType, id: string) => {
 
   return await repository.finishGame(Number(id), data);
 };
-

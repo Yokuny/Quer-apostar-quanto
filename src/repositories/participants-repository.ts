@@ -1,6 +1,6 @@
-import { prisma } from "@/database";
+import { prisma } from "../database";
 import { User } from "@prisma/client";
-import { NewParticipantType } from "@/models/newPartipant-type";
+import { NewParticipantType } from "../models/newPartipant-type";
 
 export const postParticipant = (data: NewParticipantType) => {
   return prisma.user.create({

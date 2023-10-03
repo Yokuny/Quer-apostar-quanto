@@ -1,4 +1,4 @@
-import app, { init } from "@/index";
+import app, { init } from "./index";
 
 const port = process.env.PORT || 8000;
 

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
-import * as service from "@/services/participants-service";
-import { CustomError } from "@/models";
+import * as service from "../services/participants-service";
+import { CustomError } from "../models";
 
 export const postParticipant = async (req: Request, res: Response) => {
   try {

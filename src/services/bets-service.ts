@@ -1,5 +1,5 @@
-import * as respository from "@/repositories";
-import { NewBetType, CustomError } from "@/models";
+import * as respository from "../repositories";
+import { NewBetType, CustomError } from "../models";
 
 export const postBet = async (data: NewBetType) => {
   if (data.amountBet < 100) throw new CustomError("Valor mínimo de aposta é R$ 1,00", 406);
